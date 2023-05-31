@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:samaritan/misc/utilities.dart';
-import 'package:samaritan/screens/homescreen.dart';
+import 'package:samaritan/screens/loginscreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: SamaritanColors.primaryColor,
       ),
-      home: const HomeScreen(title: 'Timeline'),
+      home: LoginScreen(),
     );
   }
 }
