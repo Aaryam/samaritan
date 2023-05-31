@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "158568589407",
+    "project_id": "icarus-67422",
+    "storage_bucket": "icarus-67422.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158568589407:android:b0219c53d460a7cc1313ea",
+        "android_client_info": {
+          "package_name": "com.samaritan.samaritan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "158568589407-iujgt2ddc4knc8iplk3nf0tqgtaten1u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.samaritan.samaritan",
+            "certificate_hash": "2fa2e22f953f9f09e07207286405a90d74e6866a"
+          }
+        },
+        {
+          "client_id": "158568589407-dgsduc84dsa6oa101u8enpmv064pvuj2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRs2zTqwySTtn1xuuid07rD01GdOXJkoI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158568589407-dgsduc84dsa6oa101u8enpmv064pvuj2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
