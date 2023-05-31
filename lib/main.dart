@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:samaritan/misc/utilities.dart';
 import 'package:samaritan/screens/homescreen.dart';
 
 void main() {
@@ -11,9 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Samaritan',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: SamaritanColors.primaryColor,
       ),
       home: const HomeScreen(title: 'Timeline'),
     );
