@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:samaritan/misc/utilities.dart';
 import 'package:samaritan/screens/homescreen.dart';
-import 'package:samaritan/screens/registerscreen.dart';
+import 'package:samaritan/screens/loginscreen.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
   @override
-  LoginScreenState createState() => LoginScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -21,14 +21,14 @@ class LoginScreenState extends State<LoginScreen> {
           physics: const BouncingScrollPhysics(),
           children: [
             Image.network(
-              'https://cdni.iconscout.com/illustration/premium/thumb/login-page-2578971-2147152.png',
+              'https://i.pinimg.com/originals/a4/0d/ff/a40dff179144e07fc168e6e6dabcf746.jpg',
               height: MediaQuery.of(context).size.height * 0.4,
             ),
             const SizedBox(height: 20.0),
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Login',
+                'Register',
                 style: TextStyle(
                     fontSize: 30,
                     fontFamily: 'Poppins',
@@ -93,7 +93,7 @@ class LoginScreenState extends State<LoginScreen> {
                 onPressed: () async {
                   String email = emailController.text;
                   String password = passwordController.text;
-                  // Perform login logic here
+                  // Perform Register logic here
 
                   if (await AuthenticationUtilities.isSignedIn()) {
                     Navigator.push(
@@ -121,7 +121,7 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 child: const Text(
-                  'Login',
+                  'Register',
                   style: TextStyle(
                     fontSize: 16,
                     fontFamily: 'Poppins',
@@ -136,11 +136,11 @@ class LoginScreenState extends State<LoginScreen> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RegisterScreen(),
+                      builder: (context) => LoginScreen(),
                     ));
               },
               child: const Text(
-                "Don't have an account?",
+                "Already have an account?",
                 style: TextStyle(
                   color: Color.fromARGB(255, 97, 154, 201),
                   decoration: TextDecoration.underline,
