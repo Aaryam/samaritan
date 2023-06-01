@@ -2,8 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:samaritan/misc/utilities.dart';
 
-class DonationDialog extends StatelessWidget {
-  const DonationDialog({super.key, required this.descriptionController, required this.targetAmountController, required this.imageUrlController});
+class PostDialog extends StatelessWidget {
+  const PostDialog({super.key, required this.descriptionController, required this.targetAmountController, required this.imageUrlController});
 
   final TextEditingController descriptionController;
   final TextEditingController targetAmountController;
@@ -75,7 +75,7 @@ class DonationDialog extends StatelessWidget {
             double targetAmount = double.parse(targetAmountController.text);
             String imageUrl = imageUrlController.text;
 
-            UserUtilities.createPost(FirebaseAuth.instance.currentUser!.email as String, description, targetAmount, 0, imageUrl);
+            UserUtilities.createPost(FirebaseAuth.instance.currentUser!.email as String, description, targetAmount, 0.0, imageUrl);
 
             Navigator.pop(context);
           },

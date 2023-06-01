@@ -10,29 +10,67 @@ class StartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AutoFutureBuilder(
-        future: Firebase.initializeApp(),
-        widget: FutureBuilder(
+    return FutureBuilder(
+      future: AuthenticationUtilities.isSignedIn(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          bool snapshotBool = snapshot.data as bool;
+
+          if (snapshotBool) {
+            print('signed in.');
+            return const HomeScreen(title: '');
+          } else {
+            print('not signed in.');
+            return LoginScreen();
+          }
+        } else if (snapshot.hasError) {
+          print(snapshot.error.toString());
+          return Text(snapshot.error.toString());
+        } else {
+          return Container();
+        }
+      },
+    );
+
+    /*return FutureBuilder(
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return FutureBuilder(
           future: AuthenticationUtilities.isSignedIn(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               bool snapshotBool = snapshot.data as bool;
 
               if (snapshotBool) {
+                print('signed in.');
                 return const HomeScreen(title: '');
               }
               else {
+                print('not signed in.');
                 return LoginScreen();
               }
             }
             else if (snapshot.hasError) {
+              print(snapshot.error.toString());
               return Text(snapshot.error.toString());
             }
             else {
               return Container();
             }
           },
-        )
-    );
+        );
+      }
+      else if (snapshot.hasError) {
+        return Text(snapshot.error.toString());
+      }
+      else {
+        return Container();
+      }
+    });*/
   }
 }
+
+/*
+
+*/

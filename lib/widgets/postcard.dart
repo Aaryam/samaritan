@@ -8,8 +8,9 @@ class PostCard extends StatelessWidget {
   final String postDescription;
   final double raisedAmount;
   final double targetAmount;
+  final int tag;
 
-  const PostCard({Key? key, required this.organization, required this.imageLink, required this.postDescription, required this.raisedAmount, required this.targetAmount})
+  const PostCard({Key? key, required this.organization, required this.imageLink, required this.postDescription, required this.raisedAmount, required this.targetAmount, required this.tag})
       : super(key: key);
 
   @override
@@ -19,7 +20,7 @@ class PostCard extends StatelessWidget {
     String targetString = '\$${numberFormat.format(targetAmount)}';
 
     return Hero(
-      tag: organization,
+      tag: tag.toString(),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10, top: 10),
         child: GestureDetector(
@@ -38,7 +39,7 @@ class PostCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text(organization,
+                      Text(organization.split("@")[0],
                           style: const TextStyle(
                               fontSize: 22,
                               fontFamily: 'Poppins',

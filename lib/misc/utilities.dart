@@ -97,8 +97,6 @@ class AuthenticationUtilities {
       }
     }
 
-    await UserUtilities.createUser(user!.email as String);
-
     return user;
   }
 
@@ -156,33 +154,14 @@ class AuthenticationUtilities {
 }
 
 class UserUtilities {
-  static Future<bool> createUser(String email) async {
-    FirebaseFirestore.instance.collection('users').doc(email).set({
-      'username': email.split("@")[0],
-      'lastLogged': DateTime.now().millisecondsSinceEpoch,
-    });
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(email)
-        .collection('following')
-        .doc(email);
-
-    if (await userExists(email)) {
-      FirebaseFirestore.instance.collection('users').doc(email).update({
-        'lastLogged': DateTime.now().millisecondsSinceEpoch,
-      });
-    } else {}
-
-    return true;
-  }
-
   static bool createPost(String authorEmail, String description,
       double targetAmount, double raisedAmount, String imageURL) {
     var uuid = const Uuid();
 
-    String docID = uuid.v4();
+    String docID =  uuid.v4();
 
     FirebaseFirestore.instance.collection('posts').doc(docID).set({
+      'organization': FirebaseAuth.instance.currentUser!.email,
       'description': description,
       'imageURL': imageURL,
       'targetAmount': targetAmount,
@@ -201,20 +180,5 @@ class UserUtilities {
             .doc(email)
             .get())
         .exists;
-  }
-}
-
-class ModelUtilities {
-  static Map<String, Object> instantiateUser(
-      username, following, followers, posts, blocked, likedPosts, lastLogged) {
-    return {
-      'username': username,
-      'following': following,
-      'followers': followers,
-      'posts': posts,
-      'blocked': blocked,
-      'likedPosts': likedPosts,
-      'lastLogged': lastLogged,
-    };
   }
 }
