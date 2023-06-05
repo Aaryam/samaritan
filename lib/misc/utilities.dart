@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upi_india/upi_india.dart';
 import 'package:uuid/uuid.dart';
 
 class SamaritanColors {
@@ -154,24 +158,87 @@ class AuthenticationUtilities {
 }
 
 class UserUtilities {
-  static bool createPost(String authorEmail, String description,
-      double targetAmount, double raisedAmount, String imageURL) {
+  static bool createPost(
+      String organizationName,
+      String authorEmail,
+      String description,
+      double targetAmount,
+      double raisedAmount,
+      String imageURL) {
     var uuid = const Uuid();
 
-    String docID =  uuid.v4();
+    String docID = uuid.v4();
+    int time = DateTime.now().millisecondsSinceEpoch;
 
     FirebaseFirestore.instance.collection('posts').doc(docID).set({
-      'organization': FirebaseAuth.instance.currentUser!.email,
+      'organization': organizationName,
+      'email': FirebaseAuth.instance.currentUser!.email,
       'description': description,
       'imageURL': imageURL,
       'targetAmount': targetAmount,
       'raisedAmount': raisedAmount,
-      'time': DateTime.now().millisecondsSinceEpoch
+      'time': time
     });
 
-    FirebaseFirestore.instance.collection('users').doc(authorEmail).collection('posts').doc(docID);
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .collection('posts')
+        .doc(docID)
+        .set({
+      'time': time,
+    });
 
     return true;
+  }
+
+  static Future<void> createUser(
+      String email, String name, String upiID) async {
+    await FirebaseFirestore.instance.collection('users').doc(email).set({
+      'name': name,
+      'upiID': upiID,
+    });
+  }
+
+  static Future<bool> initializeUserDetails() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+
+    if (!(await UserUtilities.userExists(
+        FirebaseAuth.instance.currentUser!.email as String))) {
+      return false;
+    } else {
+      String name = (await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .get())['name'];
+      String upiID = (await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.email)
+          .get())['upiID'];
+
+      sharedPreferences.setString('name', name);
+      sharedPreferences.setString('upiID', upiID);
+
+      return true;
+    }
+  }
+
+  static Future<String> getUPIFromEmail(String email) async {
+    String upiID = (await FirebaseFirestore.instance
+        .collection('users')
+        .doc(email)
+        .get())['upiID'];
+
+    return upiID;
+  }
+
+  static Future<String> getNameFromEmail(String email) async {
+    String name = (await FirebaseFirestore.instance
+        .collection('users')
+        .doc(email)
+        .get())['name'];
+
+    return name;
   }
 
   static Future<bool> userExists(String email) async {
@@ -180,5 +247,75 @@ class UserUtilities {
             .doc(email)
             .get())
         .exists;
+  }
+
+  static Future<bool> updatePayment(
+      String docID, String recieverEmail, double payment) async {
+    double raisedBeforePayment = (await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(docID)
+        .get())['raisedAmount'];
+    double raisedAfterPayment = raisedBeforePayment + payment;
+
+    await FirebaseFirestore.instance.collection('posts').doc(docID).update({
+      'recievedAmount': raisedAfterPayment,
+    });
+
+    /*await FirebaseFirestore.instance
+        .collection('users')
+        .doc(recieverEmail)
+        .collection('posts')
+        .doc(docID)
+        .update({
+      'recievedAmount': raisedAfterPayment,
+    });*/
+
+    return true;
+  }
+}
+
+class UPIUtilities {
+  static Future doUpiTransation(
+      UpiApp appMeta,
+      double amount,
+      String recieverName,
+      String receiverUpiAddress,
+      String transactionRef,
+      String transactionNote,
+      BuildContext context) async {
+    String? validationMsg = validateUPIAddress(receiverUpiAddress);
+
+    if (validationMsg != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(validationMsg)));
+      Navigator.pop(context);
+    }
+
+    UpiIndia upiIndia = UpiIndia();
+
+    await upiIndia.startTransaction(
+      amount: amount,
+      app: appMeta,
+      receiverName: recieverName,
+      receiverUpiId: receiverUpiAddress,
+      transactionRefId: transactionRef,
+      transactionNote: transactionNote,
+    );
+    // print(response.status);
+    Navigator.pop(context);
+  }
+
+  static String generateTransactionRef() {
+    return Random.secure().nextInt(1 << 32).toString();
+  }
+
+  static String? validateUPIAddress(String value) {
+    if (value.isEmpty) {
+      return 'UPI VPA is required.';
+    }
+    if (value.split('@').length != 2) {
+      return 'Invalid UPI VPA';
+    }
+    return null;
   }
 }

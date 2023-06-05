@@ -19,10 +19,13 @@ class PostDialog extends StatelessWidget {
         'Create Post',
         style: TextStyle(fontFamily: 'Poppins'),
       ),
-      content: Column(
+      content: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
+            maxLines: 8,
             controller: descriptionController,
             decoration: InputDecoration(
               hintText: 'Enter post description.',
@@ -63,6 +66,7 @@ class PostDialog extends StatelessWidget {
           ),
         ],
       ),
+      ),
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -70,12 +74,13 @@ class PostDialog extends StatelessWidget {
             elevation: 0,
             textStyle: const TextStyle(fontFamily: 'Poppins'),
           ),
-          onPressed: () {
+          onPressed: () async {
+            String displayName = await UserUtilities.getNameFromEmail(FirebaseAuth.instance.currentUser!.email as String);
             String description = descriptionController.text;
             double targetAmount = double.parse(targetAmountController.text);
             String imageUrl = imageUrlController.text;
 
-            UserUtilities.createPost(FirebaseAuth.instance.currentUser!.email as String, description, targetAmount, 0.0, imageUrl);
+            UserUtilities.createPost(displayName, FirebaseAuth.instance.currentUser!.email as String, description, targetAmount, 0.0, imageUrl);
 
             Navigator.pop(context);
           },

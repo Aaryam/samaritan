@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:samaritan/misc/utilities.dart';
 import 'package:samaritan/widgets/postcard.dart';
 import 'package:samaritan/widgets/postdialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.title});
@@ -19,6 +22,9 @@ class HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    print('here');
+
     return Scaffold(
       body: Center(
         child: Padding(
@@ -35,11 +41,13 @@ class HomeScreenState extends State<HomeScreen> {
                 }
 
                 if (!snapshot.hasData) {
-                  return Container();
+                  return Container(color: Colors.blue,);
                 }
 
                 final posts =
                     snapshot.data!.docs.map((doc) => doc.data()).toList();
+
+                final postIDs = snapshot.data!.docs.map((doc) => doc.id).toList();
 
                 return ListView.builder(
                   physics: const BouncingScrollPhysics(),
@@ -48,11 +56,14 @@ class HomeScreenState extends State<HomeScreen> {
                     final post = posts[index] as Map;
                     return PostCard(
                       tag: index,
-                        organization: post['organization'],
+                      postDocID: postIDs[index],
+                        displayName: post['organization'],
+                        organizationEmail: post['email'],
                         imageLink: post['imageURL'],
                         postDescription: post['description'],
                         raisedAmount: post['raisedAmount'],
-                        targetAmount: post['targetAmount']);
+                        targetAmount: post['targetAmount'],
+                    );
                   },
                 );
               },
@@ -60,6 +71,7 @@ class HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+
           showDialog(
               context: context,
               builder: (context) {

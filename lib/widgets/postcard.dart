@@ -3,14 +3,16 @@ import 'package:samaritan/screens/infoscreen.dart';
 import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  final String organization;
+  final String organizationEmail;
+  final String displayName;
   final String imageLink;
   final String postDescription;
   final double raisedAmount;
   final double targetAmount;
+  final String postDocID;
   final int tag;
 
-  const PostCard({Key? key, required this.organization, required this.imageLink, required this.postDescription, required this.raisedAmount, required this.targetAmount, required this.tag})
+  const PostCard({Key? key, required this.organizationEmail, required this.imageLink, required this.postDescription, required this.raisedAmount, required this.targetAmount, required this.tag, required this.displayName, required this.postDocID})
       : super(key: key);
 
   @override
@@ -39,7 +41,7 @@ class PostCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text(organization.split("@")[0],
+                      Text(displayName,
                           style: const TextStyle(
                               fontSize: 22,
                               fontFamily: 'Poppins',
@@ -85,7 +87,7 @@ class PostCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => InfoScreen(organization: organization, imageLink: imageLink, postDescription: postDescription, raisedAmount: raisedAmount, targetAmount: targetAmount,)),
+                  builder: (context) => InfoScreen(organization: displayName, imageLink: imageLink, postDescription: postDescription, raisedAmount: raisedAmount, targetAmount: targetAmount, email: organizationEmail, postDocID: postDocID,)),
             );
           },
         ),

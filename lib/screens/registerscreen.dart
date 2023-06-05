@@ -1,9 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:samaritan/misc/utilities.dart';
 import 'package:samaritan/screens/homescreen.dart';
 import 'package:samaritan/screens/loginscreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   RegisterScreenState createState() => RegisterScreenState();
 }
@@ -11,6 +15,8 @@ class RegisterScreen extends StatefulWidget {
 class RegisterScreenState extends State<RegisterScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController upiIDController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +39,31 @@ class RegisterScreenState extends State<RegisterScreen> {
                     fontSize: 30,
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w500),
+              ),
+            ),
+            const SizedBox(height: 20.0),
+            TextField(
+              controller: nameController,
+              obscureText: false,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+              ),
+              decoration: InputDecoration(
+                hintText: 'Name',
+                filled: true,
+                fillColor: Colors.white,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
               ),
             ),
             const SizedBox(height: 20.0),
@@ -86,6 +117,31 @@ class RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
             const SizedBox(height: 20.0),
+            TextField(
+              controller: upiIDController,
+              obscureText: true,
+              style: const TextStyle(
+                fontFamily: 'Poppins',
+              ),
+              decoration: InputDecoration(
+                hintText: 'UPI ID',
+                filled: true,
+                fillColor: Colors.white,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(
+                    color: Colors.white,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20.0),
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.9,
               height: MediaQuery.of(context).size.height * 0.08,
@@ -93,7 +149,6 @@ class RegisterScreenState extends State<RegisterScreen> {
                 onPressed: () async {
                   String email = emailController.text;
                   String password = passwordController.text;
-                  // Perform Register logic here
 
                   if (await AuthenticationUtilities.isSignedIn()) {
                     Navigator.push(
@@ -102,10 +157,19 @@ class RegisterScreenState extends State<RegisterScreen> {
                           builder: (context) => const HomeScreen(title: ''),
                         ));
                   } else {
-                    await AuthenticationUtilities.signInWithEmail(
+                    await AuthenticationUtilities.registerWithEmail(
                         context, email, password);
 
-                    print('signed in');
+                    await UserUtilities.createUser(
+                        email,
+                        nameController.text,
+                        upiIDController.text);
+
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(title: ''),
+                        ));
                   }
 
                   print(

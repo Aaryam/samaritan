@@ -7,28 +7,27 @@ class InfoScreen extends StatefulWidget {
       {super.key,
       required this.organization,
       required this.imageLink,
-      required this.postDescription, required this.targetAmount, required this.raisedAmount});
+      required this.postDescription, required this.targetAmount, required this.raisedAmount, required this.email, required this.postDocID});
 
   final String organization;
   final String imageLink;
   final String postDescription;
+  final String email;
   final double targetAmount;
   final double raisedAmount;
+  final String postDocID;
 
   @override
   State<InfoScreen> createState() => InfoScreenState();
 }
 
 class InfoScreenState extends State<InfoScreen> {
-  var _value = 0.0;
   var numberFormat = NumberFormat("###,###.0#", "en_US");
 
   TextEditingController donationTextbox = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
-    _value = widget.targetAmount;
 
     String targetString = 'Target: \$${numberFormat.format(widget.targetAmount)}';
     String raisedString = 'Raised: \$${numberFormat.format(widget.raisedAmount)}';
@@ -76,7 +75,6 @@ class InfoScreenState extends State<InfoScreen> {
                   activeColor: const Color.fromRGBO(146, 143, 221, 1),
                   value: (widget.raisedAmount / widget.targetAmount),
                   onChanged: (val) {
-                    _value = val;
                     setState(() {});
                   },
                 ),
@@ -131,7 +129,7 @@ class InfoScreenState extends State<InfoScreen> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return DonationDialog(textEditingController: donationTextbox,);
+              return DonationDialog(textEditingController: donationTextbox, organizationName: widget.organization, organizationEmail: widget.email, postDocID: widget.postDocID,);
             },
           );
         },
