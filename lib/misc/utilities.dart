@@ -258,7 +258,7 @@ class UserUtilities {
     double raisedAfterPayment = raisedBeforePayment + payment;
 
     await FirebaseFirestore.instance.collection('posts').doc(docID).update({
-      'recievedAmount': raisedAfterPayment,
+      'raisedAmount': raisedAfterPayment,
     });
 
     /*await FirebaseFirestore.instance
@@ -267,7 +267,7 @@ class UserUtilities {
         .collection('posts')
         .doc(docID)
         .update({
-      'recievedAmount': raisedAfterPayment,
+      'raisedAmount': raisedAfterPayment,
     });*/
 
     return true;

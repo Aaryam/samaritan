@@ -107,11 +107,7 @@ class InfoScreenState extends State<InfoScreen> {
                 padding: EdgeInsets.symmetric(vertical: 8.0),
               ),
               Text(
-                widget.postDescription +
-                    '\n\n' +
-                    widget.postDescription +
-                    '\n\n' +
-                    widget.postDescription,
+                widget.postDescription,
                 style: const TextStyle(
                   color: Colors.black,
                   fontFamily: 'Poppins',
