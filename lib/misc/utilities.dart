@@ -1,10 +1,13 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upi_india/upi_india.dart';
 import 'package:uuid/uuid.dart';
@@ -158,13 +161,13 @@ class AuthenticationUtilities {
 }
 
 class UserUtilities {
-  static bool createPost(
+  static Future<bool> createPost(
       String organizationName,
       String authorEmail,
       String description,
       double targetAmount,
       double raisedAmount,
-      String imageURL) {
+      XFile? imageFile) async {
     var uuid = const Uuid();
 
     String docID = uuid.v4();
@@ -174,7 +177,7 @@ class UserUtilities {
       'organization': organizationName,
       'email': FirebaseAuth.instance.currentUser!.email,
       'description': description,
-      'imageURL': imageURL,
+      'imageURL': '',
       'targetAmount': targetAmount,
       'raisedAmount': raisedAmount,
       'time': time
@@ -188,6 +191,10 @@ class UserUtilities {
         .set({
       'time': time,
     });
+
+    if (imageFile != null) {
+      await UserUtilities.uploadFile(imageFile, docID);
+    }
 
     return true;
   }
@@ -269,6 +276,44 @@ class UserUtilities {
         .update({
       'raisedAmount': raisedAfterPayment,
     });*/
+
+    return true;
+  }
+
+  static Future<bool> uploadFile(XFile file, String postDocID) async {
+
+    String fileExtension = file.path.substring(file.path.lastIndexOf("."), file.path.length);
+
+    final metadata = SettableMetadata(
+      contentType: 'image/$fileExtension',
+      customMetadata: {'picked-file-path': file.path},
+    );
+
+    final storageRef = FirebaseStorage.instance.ref();
+    final imagesRef = storageRef.child("images");
+
+    if (kIsWeb) {
+      UploadTask uploadTask =
+          imagesRef.putData(await file.readAsBytes(), metadata);
+
+      uploadTask.then((res) async {
+        String downloadURL = await res.ref.getDownloadURL();
+
+        FirebaseFirestore.instance.collection('posts').doc(postDocID).update({
+          'imageURL': downloadURL,
+        });
+      });
+    } else {
+      UploadTask uploadTask = imagesRef.putFile(File(file.path), metadata);
+
+      uploadTask.then((res) async {
+        String downloadURL = await res.ref.getDownloadURL();
+
+        FirebaseFirestore.instance.collection('posts').doc(postDocID).update({
+          'imageURL': downloadURL,
+        });
+      });
+    }
 
     return true;
   }
